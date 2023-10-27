@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Storage</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #ffffe0; /* Light pink background */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center alignment */
+      justify-content: flex-start; /* Align to the top */
+      height: 100vh;
+    }
+
+    nav {
+      background-color: #4B0082; /* Indigo background for the top navigation bar */
+      padding: 15px 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    nav button {
+      background-color: #800080; /* Darker indigo for buttons */
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    nav button:hover {
+      background-color: #4B0082; /* Lighter indigo on hover */
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+      border: 1px solid #ffcccc; /* Light pink border */
+    }
+
+    th, td {
+      border: 1px solid #ffcccc; /* Light pink border */
+      text-align: left;
+      padding: 12px;
+    }
+
+    th {
+      background-color: #ffcccc; /* Light pink header */
+    }
+
+    #visitCount {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+  <script type="text/javascript">
+    const localStorage = window.localStorage;
+
+    const initialize = () => {
+      if (localStorage) {
+        const count = localStorage.getItem("visitCount") || 0;
+        const newCount = parseInt(count) + 1;
+        localStorage.setItem("visitCount", newCount);
+      }
+      updateDOM();
+    };
+
+    const updateDOM = () => {
+      const count = localStorage.getItem("visitCount") || 0;
+      const storedPreferences = localStorage.getItem("preference");
+      const preference = storedPreferences
+        ? JSON.parse(storedPreferences)
+        : {};
+      document.getElementById("visitCount").innerHTML = `Visit count ${count}`;
+      document.body.style.background = preference.color || "white";
+      showAllStoredKeyValues();
+    };
+
+    const setColorPreference = color => {
+      const preference = { color }
+      localStorage.setItem("preference", JSON.stringify(preference));
+      updateDOM();
+    };
+
+    const removeCount = () => {
+      localStorage.removeItem("visitCount");
+      updateDOM();
+    };
+
+    const clearAll = () => {
+      localStorage.clear();
+      updateDOM();
+    };
+
+    const showAllStoredKeyValues = () => {
+      console.log(`we have ${localStorage.length} values`);
+      const table = document.getElementById("storedItems");
+      table.innerHTML = "";
+
+      const headerRow = table.insertRow(0);
+      const headerCell1 = headerRow.insertCell(0);
+      const headerCell2 = headerRow.insertCell(1);
+      const headerCell3 = headerRow.insertCell(2);
+      headerCell1.innerHTML = "<b>Passport Picture</b>";
+      headerCell2.innerHTML = "<b>Name</b>";
+      headerCell3.innerHTML = "<b>Registration Number</b>";
+
+      for (let index = 0; index < localStorage.length; index++) {
+        const key = localStorage.key(index);
+        const value = localStorage.getItem(key);
+
+        const row = table.insertRow(index + 1);
+
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+
+        cell1.innerHTML = "<img src='Jewell.jpg' alt='Passport Picture' width='175' height='150'>";
+        cell2.innerHTML = "JEWELL KARANI";
+        cell3.innerHTML = "SCT222-0188/2021";
+      }
+    };
+  </script>
+</head>
+
+<body onload="initialize()">
+  <nav>
+    <button type="button" onclick="setColorPreference('red')">Red</button>
+    <button type="button" onclick="setColorPreference('green')">Green</button>
+    <button type="button" onclick="setColorPreference('blue')">Blue</button>
+    <button type="button" onclick="removeCount()">Remove count</button>
+    <button type="button" onclick="clearAll()">Clear all</button>
+  </nav>
+
+  <div id="visitCount"></div>
+
+  <table id="storedItems"></table>
+</body>
+
+</html>
